@@ -93,11 +93,12 @@ export default function BookingConfirmationPage(props: {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-gray-400\" />
+                    <Phone className="w-4 h-4 text-gray-400" />
                     <span className="text-gray-600">Phone:</span>
                     <span className="font-semibold">{booking.patient.phone}</span>
                   </div>
-                  {booking.patient.email && (\n                    <div className="flex items-center gap-2">
+                  {booking.patient.email && (
+                    <div className="flex items-center gap-2">
                       <Mail className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-600">Email:</span>
                       <span className="font-semibold">
