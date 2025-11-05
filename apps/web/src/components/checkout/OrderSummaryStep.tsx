@@ -41,7 +41,23 @@ export function OrderSummaryStep({ onNext }: Props) {
       clearCart();
       resetCurrentBooking();
       router.push(`/booking-confirmation/${result.bookingId}`);
-    }, 1500);
+    } catch (err: any) {
+      console.error('Supabase booking error, falling back to localStorage:', err);
+      // Fallback to localStorage if Supabase fails
+      const bookingData = {
+        ...currentBooking,
+        items,
+        totalAmount: getTotalPrice(),
+        paymentMethod,
+      };
+      
+      const bookingId = confirmBooking();
+      clearCart();
+      resetCurrentBooking();
+      router.push(`/booking-confirmation/${bookingId}`);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const patient = currentBooking.patient;
