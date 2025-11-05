@@ -35,17 +35,18 @@ export default function HomePage() {
   const getDisplayItems = () => {
     switch (activeTab) {
       case 'Tests':
-        return testsWithCentres;
+        return tests;
       case 'Scans':
-        return scansWithCentres;
+        return scans;
       case 'Packages':
-        return packagesWithCentres;
+        return packages;
       default:
-        return testsWithCentres;
+        return tests;
     }
   };
 
   const displayItems = getDisplayItems();
+  const isLoading = testsLoading || scansLoading || packagesLoading;
 
   const handleAddToCart = (item: any, centre: any) => {
     const itemType = activeTab.toLowerCase().slice(0, -1) as 'test' | 'scan' | 'package';
