@@ -44,7 +44,8 @@ interface BookingStore {
   resetCurrentBooking: () => void;
 }
 
-export const useBookingStore = create<BookingStore>()(n  persist(
+export const useBookingStore = create<BookingStore>()(
+  persist(
     (set, get) => ({
       currentBooking: {},
       bookings: [],
