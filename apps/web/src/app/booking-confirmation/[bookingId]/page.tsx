@@ -176,7 +176,7 @@ export default function BookingConfirmationPage(props: {
                       className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
                     >
                       <div>
-                        <div className="font-semibold text-gray-900\">
+                        <div className="font-semibold text-gray-900">
                           {item.name}
                         </div>
                         <div className="text-sm text-gray-600">
@@ -184,7 +184,7 @@ export default function BookingConfirmationPage(props: {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold">\u20b9{item.price}</div>
+                        <div className="font-semibold">₹{item.price}</div>
                         <div className="text-sm text-gray-600">
                           Qty: {item.quantity}
                         </div>
@@ -198,7 +198,7 @@ export default function BookingConfirmationPage(props: {
                 <div className="flex justify-between items-center">
                   <span className="font-bold text-gray-900">Total Amount</span>
                   <span className="text-2xl font-bold text-primary-600">
-                    \u20b9{booking.totalAmount}
+                    ₹{booking.totalAmount}
                   </span>
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
@@ -235,25 +235,25 @@ export default function BookingConfirmationPage(props: {
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                   <span>
-                    Report will be uploaded in &quot;My Bookings&quot; section
+                    Report will be uploaded in "My Bookings" section
                   </span>
                 </li>
               </ul>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4\">
+            <div className="flex gap-4">
               <Link
-                href=\"/my-bookings\"
-                className=\"flex-1 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-colors text-center\"
+                href="/my-bookings"
+                className="flex-1 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-colors text-center"
               >
                 View My Bookings
               </Link>
               <Link
-                href=\"/\"
-                className=\"flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition-colors text-center flex items-center justify-center gap-2\"
+                href="/"
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition-colors text-center flex items-center justify-center gap-2"
               >
-                <Home className=\"w-5 h-5\" />
+                <Home className="w-5 h-5" />
                 Go to Home
               </Link>
             </div>
