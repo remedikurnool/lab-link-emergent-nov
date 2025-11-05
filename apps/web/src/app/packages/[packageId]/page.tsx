@@ -1,8 +1,7 @@
-export default function PackageDetailPage({
-  params,
-}: {
-  params: { packageId: string };
+export default async function PackageDetailPage(props: {
+  params: Promise<{ packageId: string }>;
 }) {
+  const params = await props.params;
   return (
     <div className="min-h-screen p-8">
       <div className="max-w-7xl mx-auto">
