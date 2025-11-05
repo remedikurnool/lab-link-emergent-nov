@@ -175,9 +175,12 @@ export default function CartPage() {
               ₹{getTotalPrice()}
             </div>
           </div>
-          <button className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-lg transition-colors">
+          <Link
+            href="/checkout"
+            className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-lg transition-colors"
+          >
             Checkout
-          </button>
+          </Link>
         </div>
       </div>
 
