@@ -235,24 +235,31 @@ export function OrderSummaryStep({ onNext }: Props) {
       </div>
 
       {/* Confirm Button */}
-      <div className="flex justify-end">
-        <button
-          onClick={handleConfirmBooking}
-          disabled={isProcessing}
-          className="px-8 py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg"
-        >
-          {isProcessing ? (
-            <>
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              <Check className="w-5 h-5" />
-              Confirm Booking - ₹{getTotalPrice()}
-            </>
-          )}
-        </button>
+      <div className="space-y-4">
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+        <div className="flex justify-end">
+          <button
+            onClick={handleConfirmBooking}
+            disabled={isProcessing}
+            className="px-8 py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg"
+          >
+            {isProcessing ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <Check className="w-5 h-5" />
+                Confirm Booking - ₹{getTotalPrice()}
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
