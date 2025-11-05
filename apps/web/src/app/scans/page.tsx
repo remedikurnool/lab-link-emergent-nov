@@ -141,10 +141,6 @@ export default function ScansPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredScans.map((scan) => {
-              const lowestPriceCentre = scan.centres.reduce((prev, curr) =>
-                curr.price < prev.price ? curr : prev
-              );
-
               return (
                 <div
                   key={scan.id}
@@ -165,23 +161,51 @@ export default function ScansPage() {
                       <span className="font-semibold capitalize">{scan.category}</span>
                     </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Centres:</span>
-                      <span className="font-semibold">{scan.centres.length}</span>
+                      <span className="text-gray-600">Available at:</span>
+                      <span className="font-semibold">{scan.centres.length} centres</span>
                     </div>
                   </div>
+
+                  {/* Centre Selector */}
+                  {scan.centres.length > 1 ? (
+                    <div className="mb-4">
+                      <label className="text-xs text-gray-600 mb-1 block">
+                        Select Diagnostic Centre
+                      </label>
+                      <select
+                        onChange={(e) => {
+                          const card = e.target.closest('.bg-white');
+                          if (card) {
+                            card.setAttribute('data-selected-centre', e.target.value);
+                          }
+                        }}
+                        className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                      >
+                        {scan.centres.map((centre) => (
+                          <option key={centre.centreId} value={centre.centreId}>
+                            {centre.centreName} - ₹{centre.price}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : (
+                    <div className="mb-4 text-sm text-gray-600">
+                      {scan.centres[0].centreName}
+                    </div>
+                  )}
 
                   <div className="border-t border-gray-200 pt-3">
                     <div className="flex items-baseline gap-2 mb-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        ₹{lowestPriceCentre.price}
+                        ₹{scan.centres[0].price}
                       </span>
-                      {lowestPriceCentre.originalPrice && (
+                      {scan.centres[0].originalPrice && (
                         <>
                           <span className="text-sm line-through text-gray-400">
-                            ₹{lowestPriceCentre.originalPrice}
+                            ₹{scan.centres[0].originalPrice}
                           </span>
                           <span className="text-sm font-semibold text-green-600">
-                            {lowestPriceCentre.discount}% OFF
+                            {scan.centres[0].discount}% OFF
                           </span>
                         </>
                       )}
@@ -194,7 +218,12 @@ export default function ScansPage() {
                         View Details
                       </Link>
                       <button
-                        onClick={() => handleAddToCart(scan, lowestPriceCentre)}
+                        onClick={(e) => {
+                          const card = e.currentTarget.closest('.bg-white');
+                          const selectedCentreId = card?.getAttribute('data-selected-centre') || scan.centres[0].centreId;
+                          const centre = scan.centres.find((c) => c.centreId === selectedCentreId) || scan.centres[0];
+                          handleAddToCart(scan, centre);
+                        }}
                         className="flex-1 py-2 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-colors text-sm"
                       >
                         Add to Cart
