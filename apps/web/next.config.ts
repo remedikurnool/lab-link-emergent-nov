@@ -2,7 +2,6 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   experimental: {
     optimizePackageImports: ['lucide-react', '@mui/icons-material'],
   },
@@ -14,6 +13,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  outputFileTracingRoot: '/app',
   // PWA configuration will be added here
 };
 
