@@ -45,3 +45,7 @@ public/workbox-*.js.map
 
 # Turbo
 .turbo
+-e 
+# Environment files
+*.env
+*.env.*
