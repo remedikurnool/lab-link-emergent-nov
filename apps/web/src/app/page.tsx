@@ -19,6 +19,18 @@ import { TrendingUp } from 'lucide-react';
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Tests');
   const { addItem } = useCartStore();
+  
+  // Request notification permission
+  useRequestNotificationPermission();
+  
+  // Fetch from Supabase with fallback to mock
+  const { data: supabaseTests, isLoading: testsLoading, error: testsError } = useTests();
+  const { data: supabaseScans, isLoading: scansLoading, error: scansError } = useScans();
+  const { data: supabasePackages, isLoading: packagesLoading, error: packagesError } = usePackages();
+  
+  const tests = (testsError || !supabaseTests || supabaseTests.length === 0) ? testsWithCentres : supabaseTests;
+  const scans = (scansError || !supabaseScans || supabaseScans.length === 0) ? scansWithCentres : supabaseScans;
+  const packages = (packagesError || !supabasePackages || supabasePackages.length === 0) ? packagesWithCentres : supabasePackages;
 
   const getDisplayItems = () => {
     switch (activeTab) {
