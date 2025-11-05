@@ -10,26 +10,43 @@ import { DiscountBanner } from '@/components/home/DiscountBanner';
 import { Tabs } from '@/components/ui/tabs';
 import { TopBar } from '@/components/navigation/TopBar';
 import { BottomNav } from '@/components/navigation/BottomNav';
-import { tests, scans, packages as healthPackages } from '@/lib/data/mockData';
+import { testsWithCentres, scansWithCentres, packagesWithCentres } from '@/lib/data/mockDataWithCentres';
+import { useCartStore } from '@/store/cartStore';
 import { TrendingUp } from 'lucide-react';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Tests');
+  const { addItem } = useCartStore();
 
   const getDisplayItems = () => {
     switch (activeTab) {
       case 'Tests':
-        return tests;
+        return testsWithCentres;
       case 'Scans':
-        return scans;
+        return scansWithCentres;
       case 'Packages':
-        return healthPackages;
+        return packagesWithCentres;
       default:
-        return tests;
+        return testsWithCentres;
     }
   };
 
   const displayItems = getDisplayItems();
+
+  const handleAddToCart = (item: any, centre: any) => {
+    const itemType = activeTab.toLowerCase().slice(0, -1) as 'test' | 'scan' | 'package';
+    addItem({
+      id: item.id,
+      type: itemType,
+      name: item.name,
+      price: centre.price,
+      originalPrice: centre.originalPrice,
+      diagnosticCenterId: centre.centreId,
+      diagnosticCenterName: centre.centreName,
+      reportDeliveryTime: centre.reportDeliveryTime,
+      testsIncluded: item.testsIncluded,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -92,11 +109,9 @@ export default function HomePage() {
                 return (
                   <TestCard
                     key={item.id}
-                    test={{
-                      ...item,
-                      reportDeliveryTime: item.reportDeliveryTime || '24 hours',
-                    }}
+                    test={item}
                     gradient={gradients[index % gradients.length]}
+                    onAddToCart={handleAddToCart}
                   />
                 );
               })}
