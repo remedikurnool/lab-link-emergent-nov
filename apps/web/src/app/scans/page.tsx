@@ -1,12 +1,220 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import { TopBar } from '@/components/navigation/TopBar';
+import { BottomNav } from '@/components/navigation/BottomNav';
+import { Search, SlidersHorizontal } from 'lucide-react';
+import { scansWithCentres, diagnosticCenters } from '@/lib/data/mockDataWithCentres';
+import { useSearchStore } from '@/store/searchStore';
+import { useDebounce } from '@/hooks/use-debounce';
+import Link from 'next/link';
+import { useCartStore } from '@/store/cartStore';
+
 export default function ScansPage() {
+  const [showFilters, setShowFilters] = useState(false);
+  const {
+    searchQuery,
+    selectedCategory,
+    selectedCentre,
+    setSearchQuery,
+    setSelectedCategory,
+    setSelectedCentre,
+    resetFilters,
+  } = useSearchStore();
+
+  const debouncedSearch = useDebounce(searchQuery, 300);
+  const { addItem } = useCartStore();
+
+  const filteredScans = useMemo(() => {
+    return scansWithCentres.filter((scan) => {
+      const matchesSearch =
+        debouncedSearch === '' ||
+        scan.name.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        scan.description?.toLowerCase().includes(debouncedSearch.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === 'all' || scan.category === selectedCategory;
+
+      const matchesCentre =
+        selectedCentre === 'all' ||
+        scan.centres.some((c) => c.centreId === selectedCentre);
+
+      return matchesSearch && matchesCategory && matchesCentre;
+    });
+  }, [debouncedSearch, selectedCategory, selectedCentre]);
+
+  const handleAddToCart = (scan: any, centre: any) => {
+    addItem({
+      id: scan.id,
+      type: 'scan',
+      name: scan.name,
+      price: centre.price,
+      originalPrice: centre.originalPrice,
+      diagnosticCenterId: centre.centreId,
+      diagnosticCenterName: centre.centreName,
+      reportDeliveryTime: centre.reportDeliveryTime,
+    });
+  };
+
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-4">Medical Scans</h1>
-        <p className="text-muted-foreground">
-          Scans listing will be implemented in Phase 2
-        </p>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <TopBar />
+
+      <main className="pb-20 md:pb-8">
+        <div className="container mx-auto px-4 py-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">Medical Scans</h1>
+              <p className="text-sm text-gray-600">
+                {filteredScans.length} scans available
+              </p>
+            </div>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="text-sm font-medium">Filters</span>
+            </button>
+          </div>
+
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search for scans..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+            />
+          </div>
+
+          {showFilters && (
+            <div className="bg-white rounded-xl p-4 space-y-4 border border-gray-200">
+              <div>
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
+                  Category
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {['all', 'ultrasound', 'ct', 'mri', 'xray', 'ecg'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        selectedCategory === cat
+                          ? 'bg-primary-500 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-900 mb-2 block">
+                  Diagnostic Centre
+                </label>
+                <select
+                  value={selectedCentre}
+                  onChange={(e) => setSelectedCentre(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="all">All Centres</option>
+                  {diagnosticCenters.map((centre) => (
+                    <option key={centre.id} value={centre.id}>
+                      {centre.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                onClick={resetFilters}
+                className="w-full py-2 text-sm font-medium text-primary-600 hover:text-primary-700"
+              >
+                Reset Filters
+              </button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredScans.map((scan) => {
+              const lowestPriceCentre = scan.centres.reduce((prev, curr) =>
+                curr.price < prev.price ? curr : prev
+              );
+
+              return (
+                <div
+                  key={scan.id}
+                  className="bg-white rounded-xl p-5 border border-gray-200 hover:shadow-lg transition-shadow"
+                >
+                  <Link href={`/scans/${scan.id}`}>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 hover:text-primary-600">
+                      {scan.name}
+                    </h3>
+                  </Link>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {scan.description}
+                  </p>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Category:</span>
+                      <span className="font-semibold capitalize">{scan.category}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Centres:</span>
+                      <span className="font-semibold">{scan.centres.length}</span>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-gray-200 pt-3">
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <span className="text-2xl font-bold text-gray-900">
+                        ₹{lowestPriceCentre.price}
+                      </span>
+                      {lowestPriceCentre.originalPrice && (
+                        <>
+                          <span className="text-sm line-through text-gray-400">
+                            ₹{lowestPriceCentre.originalPrice}
+                          </span>
+                          <span className="text-sm font-semibold text-green-600">
+                            {lowestPriceCentre.discount}% OFF
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/scans/${scan.id}`}
+                        className="flex-1 py-2 text-center bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold rounded-lg transition-colors text-sm"
+                      >
+                        View Details
+                      </Link>
+                      <button
+                        onClick={() => handleAddToCart(scan, lowestPriceCentre)}
+                        className="flex-1 py-2 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                      >
+                        Add to Cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {filteredScans.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No scans found matching your criteria</p>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <BottomNav />
     </div>
   );
 }
