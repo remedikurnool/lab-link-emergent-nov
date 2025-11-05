@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/store/cartStore';
 import { useBookingStore } from '@/store/bookingStore';
+import { createBooking } from '@/lib/supabase-functions';
 import { Check, MapPin, Calendar, Clock, User, CreditCard } from 'lucide-react';
 
 interface Props {
@@ -19,25 +20,27 @@ export function OrderSummaryStep({ onNext }: Props) {
     'prepaid' | 'pay_at_lab'
   >('pay_at_lab');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState('');
 
   const handleConfirmBooking = async () => {
     setIsProcessing(true);
+    setError('');
     setPaymentMethod(paymentMethod);
 
-    // Store items and total in booking
-    const bookingData = {
-      ...currentBooking,
-      items,
-      totalAmount: getTotalPrice(),
-      paymentMethod,
-    };
+    try {
+      // Try to create booking in Supabase
+      const result = await createBooking(
+        currentBooking.patient!,
+        currentBooking.collection!,
+        items,
+        getTotalPrice(),
+        paymentMethod
+      );
 
-    // Simulate API call
-    setTimeout(() => {
-      const bookingId = confirmBooking();
+      // If successful, clear cart and redirect
       clearCart();
       resetCurrentBooking();
-      router.push(`/booking-confirmation/${bookingId}`);
+      router.push(`/booking-confirmation/${result.bookingId}`);
     }, 1500);
   };
 
