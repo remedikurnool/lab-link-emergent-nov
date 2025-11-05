@@ -11,6 +11,8 @@ import { Tabs } from '@/components/ui/tabs';
 import { TopBar } from '@/components/navigation/TopBar';
 import { BottomNav } from '@/components/navigation/BottomNav';
 import { testsWithCentres, scansWithCentres, packagesWithCentres } from '@/lib/data/mockDataWithCentres';
+import { useTests, useScans, usePackages } from '@/hooks/use-supabase-queries';
+import { useRequestNotificationPermission } from '@/hooks/use-realtime';
 import { useCartStore } from '@/store/cartStore';
 import { TrendingUp } from 'lucide-react';
 
