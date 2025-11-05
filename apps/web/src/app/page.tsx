@@ -110,9 +110,13 @@ export default function HomePage() {
               👍 Trusted by 1Mn+ Customers
             </p>
 
-            {/* Cards Container */}
-            <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
-              {displayItems.map((item, index) => {
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
+              </div>
+            ) : (
+              <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-hide">
+                {displayItems.map((item, index) => {
                 const gradients = [
                   'from-teal-400 to-cyan-500',
                   'from-purple-500 to-purple-700',
