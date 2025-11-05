@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface CartItem {
   id: string;
@@ -24,7 +24,8 @@ interface CartStore {
   getTotalPrice: () => number;
 }
 
-export const useCartStore = create<CartStore>()(n  persist(
+export const useCartStore = create<CartStore>()(
+  persist(
     (set, get) => ({
       items: [],
 
@@ -84,6 +85,7 @@ export const useCartStore = create<CartStore>()(n  persist(
     }),
     {
       name: 'lablink-cart',
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
