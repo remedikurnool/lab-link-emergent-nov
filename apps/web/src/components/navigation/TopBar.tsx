@@ -2,8 +2,12 @@
 
 import Link from 'next/link';
 import { Menu, ShoppingCart, Bell } from 'lucide-react';
+import { useCartStore } from '@/store/cartStore';
 
 export function TopBar() {
+  const { getTotalItems } = useCartStore();
+  const cartCount = getTotalItems();
+
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200">
       <div className="container mx-auto px-4">
@@ -24,9 +28,14 @@ export function TopBar() {
               <Bell className="w-5 h-5 text-gray-600" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
-            <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
+            <Link href="/cart" className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <ShoppingCart className="w-5 h-5 text-gray-600" />
-            </button>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
             <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors md:hidden">
               <Menu className="w-5 h-5 text-gray-600" />
             </button>
