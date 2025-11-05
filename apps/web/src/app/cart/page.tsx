@@ -160,7 +160,7 @@ export default function CartPage() {
               </div>
             </div>
             <button className="w-full py-3 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-lg transition-colors">
-              Proceed to Checkout
+              <Link href="/checkout">Proceed to Checkout</Link>
             </button>
           </div>
         </div>
