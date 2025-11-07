@@ -136,7 +136,7 @@ export default function HomePage() {
                 );
               })}
               </div>
-            )
+            )}
           </div>
 
           {/* Discount Banner */}
