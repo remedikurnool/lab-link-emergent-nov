@@ -146,6 +146,9 @@ export default function HomePage() {
 
       {/* Bottom Navigation */}
       <BottomNav />
+      
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </div>
   );
 }
