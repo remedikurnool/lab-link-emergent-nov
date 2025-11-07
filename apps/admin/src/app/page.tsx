@@ -117,6 +117,9 @@ export default function AdminDashboard() {
               <Link href="/centres" className="text-sm font-medium text-gray-700 hover:text-primary-600">
                 Centres
               </Link>
+              <Link href="/settings" className="text-sm font-medium text-gray-700 hover:text-primary-600">
+                Settings
+              </Link>
             </nav>
           </div>
         </div>
