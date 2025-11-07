@@ -1,6 +1,263 @@
 # Lab Link - Diagnostic Booking Platform
 
-A mobile-first, PWA-ready diagnostic booking web application for healthcare partners.
+A complete, production-ready diagnostic booking platform for healthcare partners.
+
+## 🚀 Quick Start
+
+```bash
+# Start both apps
+./start-platform.sh
+
+# Or manually:
+# Partner App (Port 3000)
+cd apps/web && PORT=3000 yarn dev
+
+# Admin Panel (Port 3001)
+cd apps/admin && PORT=3001 yarn dev
+```
+
+**Access:**
+- 📱 Partner App: http://localhost:3000
+- 👨‍💼 Admin Panel: http://localhost:3001
+
+## ✨ Complete Feature Set
+
+### 🏥 Partner App (Port 3000)
+✅ **Authentication:** Email/password via Supabase Auth  
+✅ **Browse & Search:** Real-time search with filters  
+✅ **Multi-Centre Pricing:** Compare prices across centres  
+✅ **Shopping Cart:** Full cart management  
+✅ **Booking Flow:** 3-step checkout with validation  
+✅ **Prescription Upload:** Supabase Storage integration  
+✅ **My Bookings:** Booking history & tracking  
+✅ **My Earnings:** Commission tracking (10%)  
+✅ **Profile Management:** Edit details, bank info  
+✅ **PWA Ready:** Installable, offline support  
+✅ **Multi-Language:** English & Telugu  
+✅ **Real-Time Notifications:** Browser push  
+
+### 👨‍💼 Admin Panel (Port 3001)
+✅ **Dashboard:** Revenue, partners, bookings stats  
+✅ **Partners Management:** Activate/deactivate, view all  
+✅ **Bookings Management:** Approve, complete, cancel  
+✅ **Commissions:** Approve & mark as paid  
+✅ **Centres Management:** Add/edit diagnostic centres  
+✅ **Settings:** Configure WhatsApp, Razorpay, PhonePe  
+✅ **Real-Time Updates:** Instant sync with partner app  
+
+## 🗄️ Supabase Backend
+
+### Database (9 Tables):
+- `diagnostic_centres` - Lab/scan centres
+- `tests` - Lab tests catalogue  
+- `scans` - Medical scans
+- `packages` - Health packages
+- `centre_pricing` - Multi-centre pricing
+- `partners` - Healthcare partners
+- `patients` - Patient records
+- `bookings` - All bookings
+- `commissions` - Partner earnings
+
+### Features:
+- ✅ Row Level Security (RLS)
+- ✅ Real-time subscriptions
+- ✅ File storage (prescriptions, reports)
+- ✅ Edge functions
+- ✅ Authentication
+
+## 🔧 Tech Stack
+
+**Frontend:**
+- Next.js 15 (App Router)
+- TypeScript
+- Tailwind CSS + ShadCN/UI
+- Zustand (state management)
+- TanStack Query (data fetching)
+
+**Backend:**
+- Supabase (PostgreSQL)
+- Supabase Auth
+- Supabase Storage
+- Supabase Realtime
+- Edge Functions
+
+**PWA:**
+- next-pwa (@ducanh2912/next-pwa)
+- Service worker
+- Offline caching
+- Install prompt
+
+**i18n:**
+- next-intl
+- English & Telugu support
+
+**Integrations:**
+- Razorpay (admin-configurable)
+- PhonePe (admin-configurable)
+- WhatsApp Business API (admin-configurable)
+
+## 📁 Project Structure
+
+```
+lablink/
+├── apps/
+│   ├── web/          # Partner App (Port 3000)
+│   └── admin/        # Admin Panel (Port 3001)
+├── packages/         # Shared packages
+├── supabase/         # Database migrations & functions
+└── supervisor/       # Process management
+```
+
+## 🔐 Setup Supabase
+
+1. **Run Migrations:**
+   - Copy `/app/supabase/migrations/001_initial_schema.sql`
+   - Paste in Supabase SQL Editor → Run
+   - Copy `/app/supabase/migrations/002_seed_data.sql`
+   - Paste and Run
+   - Copy `/app/supabase/migrations/003_storage_and_settings.sql`
+   - Paste and Run
+
+2. **Create Storage Buckets:**
+   - Go to Storage → New Bucket
+   - Create: `prescriptions` (private, 5MB)
+   - Create: `reports` (private, 10MB)
+
+3. **Enable Realtime:**
+   - Database → Replication
+   - Enable for: `bookings`, `commissions`
+
+4. **Create Partner Account:**
+   - Auth → Users → Add User
+   - Email: partner@lablink.com, Password: demo123
+   - Link to partners table (see QUICK_SUPABASE_SETUP.md)
+
+## 💡 Key Features
+
+### File Upload
+- Prescription upload during checkout
+- Report upload in admin panel
+- Supabase Storage integration
+- Preview & download
+
+### Payment Gateways (Admin Configurable)
+- **Razorpay:** Full integration ready
+- **PhonePe:** Integration ready
+- Configure in Admin → Settings
+- Enable/disable from admin
+
+### Notifications
+- **Browser Push:** Real-time commission updates
+- **WhatsApp:** Admin-configurable
+- **SMS:** Integration ready
+
+### PWA
+- **Installable:** Add to home screen
+- **Offline:** Works without internet
+- **Service Worker:** Automatic caching
+- **Install Prompt:** Auto-appears after 10s
+
+### Multi-Language
+- **English** (default)
+- **Telugu** (తెలుగు)
+- Language switcher in top bar
+- All major text translated
+
+## 📊 Sample Data
+
+After running migrations:
+- 3 Diagnostic Centres (Vijaya, Thyrocare, Lucid)
+- 6 Lab Tests (CBC, HbA1c, Thyroid, FBS, Lipid, Vitamin D)
+- 6 Scans (USG, CT, ECHO, ECG, MRI, X-Ray)
+- 3 Packages (Diabetes, Full Body, Master)
+- 24 Centre pricing entries
+
+## 🚀 Deployment
+
+### Vercel (Frontend)
+```bash
+# Partner App
+vercel --cwd apps/web
+
+# Admin Panel  
+vercel --cwd apps/admin
+```
+
+### Environment Variables
+```
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+NEXT_PUBLIC_APP_URL=your_domain
+```
+
+## 📖 Documentation
+
+- `QUICK_SUPABASE_SETUP.md` - 5-minute setup
+- `SUPABASE_INTEGRATION.md` - Complete integration guide
+- `DEVELOPMENT.md` - Development workflow
+- `supabase/SETUP_INSTRUCTIONS.md` - Detailed setup
+
+## ✅ Features Checklist
+
+**Partner App:**
+- [x] Authentication (Supabase Auth)
+- [x] Browse tests/scans/packages
+- [x] Real-time search & filters
+- [x] Multi-centre pricing
+- [x] Shopping cart
+- [x] 3-step checkout
+- [x] Prescription upload
+- [x] Booking management
+- [x] Commission tracking
+- [x] Profile management
+- [x] PWA support
+- [x] Multi-language (EN/TE)
+- [x] Real-time notifications
+
+**Admin Panel:**
+- [x] Analytics dashboard
+- [x] Partners management
+- [x] Bookings management
+- [x] Commission approvals
+- [x] Centres management
+- [x] Integration settings
+- [x] WhatsApp config
+- [x] Razorpay config
+- [x] PhonePe config
+
+**Backend:**
+- [x] Supabase database (9 tables)
+- [x] Row Level Security
+- [x] Real-time subscriptions
+- [x] File storage
+- [x] Edge functions ready
+- [x] Auto commission calculation
+
+## 🎯 Production Ready
+
+This is a complete, production-ready MVP with:
+- 14 partner pages
+- 6 admin pages
+- Full Supabase backend
+- Real-time features
+- PWA capabilities
+- Multi-language support
+- Payment integrations ready
+- File upload/download
+- Commission tracking
+- Secure RLS policies
+
+## 📞 Support
+
+For issues or questions, check the documentation files or create an issue.
+
+## 📄 License
+
+Private - All rights reserved
+
+---
+
+**Built with ❤️ using Next.js 15, Supabase, and TypeScript**
 
 ## 🏗️ Project Structure
 
