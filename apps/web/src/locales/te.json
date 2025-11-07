@@ -1,0 +1,100 @@
+{
+  "home": {
+    "title": "ల్యాబ్ లింక్",
+    "subtitle": "నిర్ధారణ బుకింగ్ ప్లాట్‌ఫారమ్",
+    "search_placeholder": "పరీక్షలు లేదా చెకప్‌ల కోసం శోధించండి",
+    "urgent_blood_test": "అత్యవసర రక్త పరీక్ష అవసరమా?",
+    "fastest_lab": "భారతదేశపు అత్యంత వేగవంతమైన ల్యాబ్‌ను ఎంచుకోండి",
+    "report_in": "రిపోర్ట్",
+    "hours": "గంటల్లో",
+    "rated_lab": "రేటెడ్ ల్యాబ్",
+    "categories": "వర్గాలు",
+    "full_body_checkup": "పూర్తి శరీర పరీక్ష",
+    "diabetes": "మధుమేహం",
+    "vitamins": "విటమిన్లు",
+    "scans": "స్కాన్లు",
+    "most_booked": "అత్యధికంగా బుక్ చేయబడినవి",
+    "trusted_by": "1Mn+ కస్టమర్‌లచే విశ్వసించబడింది",
+    "limited_offer": "పరిమిత కాల ఆఫర్: అన్ని పరీక్షలపై 25% తగ్గింపు!",
+    "running_fever": "జ్వరం వస్తుందా?",
+    "fever_profile": "ఈరోజే ఫీవర్ ప్రొఫైల్ బుక్ చేయండి",
+    "starts_at": "ప్రారంభం"
+  },
+  "nav": {
+    "home": "హోమ్",
+    "tests_scans": "పరీక్షలు & స్కాన్లు",
+    "my_bookings": "నా బుకింగ్‌లు",
+    "profile": "ప్రొఫైల్",
+    "my_earnings": "నా సంపాదన"
+  },
+  "common": {
+    "add_to_cart": "కార్ట్‌కు జోడించండి",
+    "view_details": "వివరాలు చూడండి",
+    "off": "తగ్గింపు",
+    "test": "పరీక్ష",
+    "scan": "స్కాన్",
+    "package": "ప్యాకేజీ",
+    "reports_within": "రిపోర్ట్లు",
+    "tests_included": "పరీక్షలు చేర్చబడ్డాయి",
+    "select_centre": "డయాగ్నోస్టిక్ సెంటర్ ఎంచుకోండి",
+    "available_at": "అందుబాటులో",
+    "centres": "కేంద్రాలు"
+  },
+  "cart": {
+    "title": "షాపింగ్ కార్ట్",
+    "empty": "మీ కార్ట్ ఖాళీగా ఉంది",
+    "empty_message": "ప్రారంభించడానికి పరీక్షలు, స్కాన్లు లేదా ప్యాకేజీలను జోడించండి",
+    "browse_tests": "పరీక్షలు చూడండి",
+    "items_in_cart": "కార్ట్‌లో వస్తువులు",
+    "proceed_checkout": "చెకౌట్‌కు వెళ్లండి",
+    "total_amount": "మొత్తం మొత్తం",
+    "subtotal": "ఉప మొత్తం",
+    "discount": "తగ్గింపు",
+    "total": "మొత్తం"
+  },
+  "checkout": {
+    "title": "చెకౌట్",
+    "patient_details": "రోగి వివరాలు",
+    "collection_details": "సేకరణ వివరాలు",
+    "review_payment": "సమీక్ష & చెల్లింపు",
+    "full_name": "పూర్తి పేరు",
+    "age": "వయస్సు",
+    "gender": "లింగం",
+    "phone": "ఫోన్ నంబర్",
+    "email": "ఇమెయిల్",
+    "this_test_for": "ఈ పరీక్ష",
+    "myself": "నాకు",
+    "continue": "కొనసాగించు",
+    "confirm_booking": "బుకింగ్ నిర్ధారించండి",
+    "home_collection": "ఇంటి వద్ద సేకరణ",
+    "lab_visit": "ల్యాబ్ సందర్శన",
+    "select_date": "తేదీ ఎంచుకోండి",
+    "time_slot": "సమయ స్లాట్",
+    "morning": "ఉదయం",
+    "afternoon": "మధ్యాహ్నం",
+    "evening": "సాయంత్రం"
+  },
+  "bookings": {
+    "title": "నా బుకింగ్‌లు",
+    "no_bookings": "ఇంకా బుకింగ్‌లు లేవు",
+    "booking_id": "బుకింగ్ ID",
+    "status": "స్థితి",
+    "pending": "పెండింగ్",
+    "confirmed": "నిర్ధారించబడింది",
+    "completed": "పూర్తయింది"
+  },
+  "earnings": {
+    "title": "నా సంపాదన",
+    "total_earnings": "మొత్తం సంపాదన",
+    "pending": "పెండింగ్",
+    "approved": "ఆమోదించబడింది",
+    "commission_breakdown": "కమీషన్ వివరణ"
+  },
+  "auth": {
+    "login": "సైన్ ఇన్",
+    "email": "ఇమెయిల్ చిరునామా",
+    "password": "పాస్‌వర్డ్",
+    "welcome_back": "తిరిగి స్వాగతం",
+    "sign_in_account": "మీ పార్టనర్ ఖాతాలోకి సైన్ ఇన్ చేయండి"
+  }
+}

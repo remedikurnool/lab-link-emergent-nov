@@ -1,0 +1,100 @@
+{
+  "home": {
+    "title": "Lab Link",
+    "subtitle": "Diagnostic Booking Platform",
+    "search_placeholder": "Search for tests or checkups",
+    "urgent_blood_test": "NEED AN URGENT BLOOD TEST?",
+    "fastest_lab": "CHOOSE INDIA'S FASTEST LAB",
+    "report_in": "REPORT IN",
+    "hours": "HOURS",
+    "rated_lab": "Rated Lab",
+    "categories": "Categories",
+    "full_body_checkup": "Full Body Checkup",
+    "diabetes": "Diabetes",
+    "vitamins": "Vitamins",
+    "scans": "Scans",
+    "most_booked": "Most Booked",
+    "trusted_by": "Trusted by 1Mn+ Customers",
+    "limited_offer": "Limited time offer: FLAT 25% OFF on all tests!",
+    "running_fever": "Running a fever?",
+    "fever_profile": "Book a Fever Profile today",
+    "starts_at": "Starts at"
+  },
+  "nav": {
+    "home": "Home",
+    "tests_scans": "Tests & Scans",
+    "my_bookings": "My Bookings",
+    "profile": "Profile",
+    "my_earnings": "My Earnings"
+  },
+  "common": {
+    "add_to_cart": "Add to Cart",
+    "view_details": "View Details",
+    "off": "OFF",
+    "test": "TEST",
+    "scan": "SCAN",
+    "package": "PACKAGE",
+    "reports_within": "Reports within",
+    "tests_included": "tests included",
+    "select_centre": "Select Diagnostic Centre",
+    "available_at": "Available at",
+    "centres": "centres"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "empty_message": "Add tests, scans, or packages to get started",
+    "browse_tests": "Browse Tests",
+    "items_in_cart": "items in cart",
+    "proceed_checkout": "Proceed to Checkout",
+    "total_amount": "Total Amount",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "patient_details": "Patient Details",
+    "collection_details": "Collection Details",
+    "review_payment": "Review & Payment",
+    "full_name": "Full Name",
+    "age": "Age",
+    "gender": "Gender",
+    "phone": "Phone Number",
+    "email": "Email",
+    "this_test_for": "This test is for",
+    "myself": "Myself",
+    "continue": "Continue",
+    "confirm_booking": "Confirm Booking",
+    "home_collection": "Home Collection",
+    "lab_visit": "Lab Visit",
+    "select_date": "Select Date",
+    "time_slot": "Preferred Time Slot",
+    "morning": "Morning",
+    "afternoon": "Afternoon",
+    "evening": "Evening"
+  },
+  "bookings": {
+    "title": "My Bookings",
+    "no_bookings": "No Bookings Yet",
+    "booking_id": "Booking ID",
+    "status": "Status",
+    "pending": "PENDING",
+    "confirmed": "CONFIRMED",
+    "completed": "COMPLETED"
+  },
+  "earnings": {
+    "title": "My Earnings",
+    "total_earnings": "Total Earnings",
+    "pending": "Pending",
+    "approved": "Approved",
+    "commission_breakdown": "Commission Breakdown"
+  },
+  "auth": {
+    "login": "Sign In",
+    "email": "Email Address",
+    "password": "Password",
+    "welcome_back": "Welcome Back",
+    "sign_in_account": "Sign in to your partner account"
+  }
+}
