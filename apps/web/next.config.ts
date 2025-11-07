@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import withPWA from '@ducanh2912/next-pwa';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -14,7 +15,17 @@ const nextConfig: NextConfig = {
     ],
   },
   outputFileTracingRoot: '/app',
-  // PWA configuration will be added here
 };
 
-export default nextConfig;
+export default withPWA({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  skipWaiting: true,
+  cacheOnFrontEndNav: true,
+  reloadOnOnline: true,
+  swcMinify: true,
+  fallbacks: {
+    document: '/offline',
+  },
+})(nextConfig);
