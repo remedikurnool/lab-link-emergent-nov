@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Menu, ShoppingCart, Bell } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
 
 export function TopBar() {
   const { getTotalItems } = useCartStore();
@@ -23,7 +24,8 @@ export function TopBar() {
           </Link>
 
           {/* Right side icons */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <button className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <Bell className="w-5 h-5 text-gray-600" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
