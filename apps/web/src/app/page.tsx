@@ -15,6 +15,7 @@ import { useTests, useScans, usePackages } from '@/hooks/use-supabase-queries';
 import { useRequestNotificationPermission } from '@/hooks/use-realtime';
 import { useCartStore } from '@/store/cartStore';
 import { TrendingUp } from 'lucide-react';
+import { PWAInstallPrompt } from '@/components/pwa/InstallPrompt';
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Tests');
