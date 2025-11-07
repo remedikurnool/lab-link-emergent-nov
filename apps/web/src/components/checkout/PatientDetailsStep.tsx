@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useBookingStore, PatientDetails } from '@/store/bookingStore';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { FileUpload } from '@/components/ui/file-upload';
+import { FileText } from 'lucide-react';
 
 const patientSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -24,6 +27,7 @@ interface Props {
 
 export function PatientDetailsStep({ onNext }: Props) {
   const { currentBooking, setPatientDetails } = useBookingStore();
+  const [prescriptionPaths, setPrescriptionPaths] = useState<string[]>([]);
 
   const {
     register,
@@ -39,6 +43,7 @@ export function PatientDetailsStep({ onNext }: Props) {
 
   const onSubmit = (data: PatientFormData) => {
     setPatientDetails(data as PatientDetails);
+    // Store prescription paths in booking (will be added to booking store)
     onNext();
   };
 
@@ -50,7 +55,6 @@ export function PatientDetailsStep({ onNext }: Props) {
         </h2>
 
         <div className="space-y-4">
-          {/* Relationship */}
           <div>
             <Label htmlFor="relationship">This test is for</Label>
             <select
@@ -66,7 +70,6 @@ export function PatientDetailsStep({ onNext }: Props) {
             </select>
           </div>
 
-          {/* Full Name */}
           <div>
             <Label htmlFor="fullName">Full Name *</Label>
             <Input
@@ -79,7 +82,6 @@ export function PatientDetailsStep({ onNext }: Props) {
             )}
           </div>
 
-          {/* Age and Gender */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="age">Age *</Label>
@@ -106,7 +108,6 @@ export function PatientDetailsStep({ onNext }: Props) {
             </div>
           </div>
 
-          {/* Phone */}
           <div>
             <Label htmlFor="phone">Phone Number *</Label>
             <Input
@@ -121,7 +122,6 @@ export function PatientDetailsStep({ onNext }: Props) {
             )}
           </div>
 
-          {/* Email */}
           <div>
             <Label htmlFor="email">Email (Optional)</Label>
             <Input
@@ -137,7 +137,24 @@ export function PatientDetailsStep({ onNext }: Props) {
         </div>
       </div>
 
-      {/* Action Buttons */}
+      {/* Prescription Upload */}
+      <div className="bg-white rounded-xl p-6 border border-gray-200">
+        <div className="flex items-center gap-2 mb-4">
+          <FileText className="w-5 h-5 text-primary-600" />
+          <h3 className="font-semibold text-gray-900">Prescription Upload (Optional)</h3>
+        </div>
+        <p className="text-sm text-gray-600 mb-4">
+          Upload doctor's prescription if available
+        </p>
+        <FileUpload
+          bucket="prescriptions"
+          onUploadComplete={(path) => {
+            setPrescriptionPaths(prev => [...prev, path]);
+          }}
+          maxSizeMB={5}
+        />
+      </div>
+
       <div className="flex justify-end">
         <button
           type="submit"
