@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -15,63 +14,36 @@ import {
   Package,
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { RevenueChart } from '@/components/analytics/RevenueChart';
+import { BookingTrends } from '@/components/analytics/BookingTrends';
+import { PartnerMetrics } from '@/components/analytics/PartnerMetrics';
+import { AdminLayout } from '@/components/layout/AdminLayout';
+import { useDashboardStats, useBookings } from '@/hooks/use-supabase-queries';
 
-export default function AdminDashboard() {
+function AdminDashboardContent() {
   const router = useRouter();
-  const [stats, setStats] = useState({
+  const [revenueData, setRevenueData] = useState<any[]>([]);
+  const [partnerMetrics, setPartnerMetrics] = useState<any[]>([]);
+  const [bookingTrends, setBookingTrends] = useState<any[]>([]);
+  const [period, setPeriod] = useState<'7d' | '30d' | '90d' | '1y'>('30d');
+
+  // Use the hooks for data fetching and real-time updates
+  const { data: stats, isLoading: statsLoading } = useDashboardStats();
+  const { data: allBookings, isLoading: bookingsLoading } = useBookings();
+
+  const recentBookings = allBookings?.slice(0, 5) || [];
+  const loading = statsLoading || bookingsLoading;
+
+  // Default stats if not available
+  const defaultStats = {
     totalRevenue: 0,
     activePartners: 0,
     pendingBookings: 0,
     pendingCommissions: 0,
     totalBookings: 0,
-  });
-  const [recentBookings, setRecentBookings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
-    try {
-      // Fetch stats
-      const [bookingsRes, partnersRes, commissionsRes] = await Promise.all([
-        supabase.from('bookings').select('total_amount, status'),
-        supabase.from('partners').select('id, is_active'),
-        supabase.from('commissions').select('amount, status'),
-      ]);
-
-      const totalRevenue = bookingsRes.data?.reduce(
-        (sum, b) => sum + parseFloat(b.total_amount || 0),
-        0
-      ) || 0;
-
-      const activePartners = partnersRes.data?.filter(p => p.is_active).length || 0;
-      const pendingBookings = bookingsRes.data?.filter(b => b.status === 'pending').length || 0;
-      const pendingCommissions = commissionsRes.data?.filter(c => c.status === 'pending').length || 0;
-
-      setStats({
-        totalRevenue,
-        activePartners,
-        pendingBookings,
-        pendingCommissions,
-        totalBookings: bookingsRes.data?.length || 0,
-      });
-
-      // Fetch recent bookings
-      const { data: bookings } = await supabase
-        .from('bookings')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      setRecentBookings(bookings || []);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
-      setLoading(false);
-    }
   };
+
+  const dashboardStats = stats || defaultStats;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -87,45 +59,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">L</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Lab Link Admin</h1>
-                <p className="text-xs text-gray-600">Management Portal</p>
-              </div>
-            </div>
-            <nav className="flex items-center gap-6">
-              <Link href="/" className="text-sm font-medium text-gray-700 hover:text-primary-600">
-                Dashboard
-              </Link>
-              <Link href="/partners" className="text-sm font-medium text-gray-700 hover:text-primary-600">
-                Partners
-              </Link>
-              <Link href="/bookings" className="text-sm font-medium text-gray-700 hover:text-primary-600">
-                Bookings
-              </Link>
-              <Link href="/commissions" className="text-sm font-medium text-gray-700 hover:text-primary-600">
-                Commissions
-              </Link>
-              <Link href="/centres" className="text-sm font-medium text-gray-700 hover:text-primary-600">
-                Centres
-              </Link>
-              <Link href="/settings" className="text-sm font-medium text-gray-700 hover:text-primary-600">
-                Settings
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
+    <AdminLayout>
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h2>
           <p className="text-gray-600">Overview of Lab Link platform</p>
@@ -148,7 +82,7 @@ export default function AdminDashboard() {
                   <TrendingUp className="w-5 h-5 text-green-600" />
                 </div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">
-                  {formatCurrency(stats.totalRevenue)}
+                  {formatCurrency(dashboardStats.totalRevenue)}
                 </div>
                 <div className="text-sm text-gray-600">Total Revenue</div>
               </div>
@@ -161,7 +95,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">
-                  {stats.activePartners}
+                  {dashboardStats.activePartners}
                 </div>
                 <div className="text-sm text-gray-600">Active Partners</div>
               </div>
@@ -174,7 +108,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">
-                  {stats.pendingBookings}
+                  {dashboardStats.pendingBookings}
                 </div>
                 <div className="text-sm text-gray-600">Pending Bookings</div>
               </div>
@@ -187,11 +121,23 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="text-2xl font-bold text-gray-900 mb-1">
-                  {stats.pendingCommissions}
+                  {dashboardStats.pendingCommissions}
                 </div>
                 <div className="text-sm text-gray-600">Pending Commissions</div>
               </div>
             </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <RevenueChart data={revenueData} period={period} />
+              <BookingTrends data={bookingTrends} />
+            </div>
+
+            {partnerMetrics.length > 0 && (
+              <div className="mb-8">
+                <PartnerMetrics data={partnerMetrics} />
+              </div>
+            )}
 
             {/* Recent Bookings */}
             <div className="bg-white rounded-xl border border-gray-200">
@@ -241,7 +187,8 @@ export default function AdminDashboard() {
             </div>
           </>
         )}
-      </main>
-    </div>
+    </AdminLayout>
   );
 }
+
+export default AdminDashboardContent;

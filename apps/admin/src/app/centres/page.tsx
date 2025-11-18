@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Edit, Trash } from 'lucide-react';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 
-export default function CentresPage() {
+function CentresPageContent() {
   const [centres, setCentres] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -69,32 +70,20 @@ export default function CentresPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Diagnostic Centres</h1>
-              <p className="text-sm text-gray-600">Manage diagnostic centres</p>
-            </div>
-          </div>
+    <AdminLayout>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Diagnostic Centres</h2>
+          <p className="text-gray-600">Manage diagnostic centres</p>
         </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg font-bold text-gray-900">{centres.length} Centres</h2>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-lg"
-          >
-            <Plus className="w-4 h-4" />
-            Add Centre
-          </button>
-        </div>
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="flex items-center gap-2 px-4 py-2 bg-primary-500 hover:bg-primary-600 text-white font-medium rounded-lg"
+        >
+          <Plus className="w-4 h-4" />
+          Add Centre
+        </button>
+      </div>
 
         {showAddForm && (
           <div className="bg-white rounded-xl p-6 border border-gray-200 mb-6">
@@ -106,7 +95,7 @@ export default function CentresPage() {
                   placeholder="Centre Name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   required
                 />
                 <input
@@ -114,14 +103,14 @@ export default function CentresPage() {
                   placeholder="City"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <input
                   type="tel"
                   placeholder="Phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
                 <input
                   type="number"
@@ -129,7 +118,7 @@ export default function CentresPage() {
                   placeholder="Rating"
                   value={formData.rating}
                   onChange={(e) => setFormData({ ...formData, rating: parseFloat(e.target.value) })}
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
               </div>
               <input
@@ -137,7 +126,7 @@ export default function CentresPage() {
                 placeholder="Address"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
               <div className="flex justify-end gap-2">
                 <button
@@ -196,7 +185,10 @@ export default function CentresPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+    </AdminLayout>
   );
+}
+
+export default function CentresPage() {
+  return <CentresPageContent />;
 }

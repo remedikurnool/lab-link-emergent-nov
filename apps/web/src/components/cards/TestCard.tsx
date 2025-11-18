@@ -29,9 +29,13 @@ export function TestCard({
   gradient = 'from-teal-400 to-cyan-500',
   onAddToCart 
 }: TestCardProps) {
-  const [selectedCentre, setSelectedCentre] = useState(test.centres[0]);
+  const [selectedCentre, setSelectedCentre] = useState(test.centres?.[0]);
 
-  const discountPercent = selectedCentre.discount || (
+  if (!selectedCentre || !test.centres || test.centres.length === 0) {
+    return null;
+  }
+
+  const discountPercent = selectedCentre.discount ?? (
     selectedCentre.originalPrice
       ? Math.round(((selectedCentre.originalPrice - selectedCentre.price) / selectedCentre.originalPrice) * 100)
       : 0
@@ -48,6 +52,19 @@ export function TestCard({
       className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-5 text-white min-w-[280px] flex-shrink-0`}
     >
       <div className="flex flex-col h-full gap-3">
+        {/* Category Image */}
+        {test.categoryImage && (
+          <div className="w-full h-24 rounded-lg overflow-hidden mb-2 bg-white/10">
+            <img
+              src={test.categoryImage}
+              alt={test.categoryName || test.category}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
+        )}
         {/* Test Name */}
         <h3 className="text-lg font-bold mb-1 line-clamp-2">{test.name}</h3>
 
@@ -56,6 +73,12 @@ export function TestCard({
           <TestTube2 className="w-3 h-3" />
           <span>TEST</span>
         </div>
+        {/* Category Badge */}
+        {test.categoryName && (
+          <div className="inline-flex items-center gap-1 bg-white/20 rounded-full px-2 py-0.5 text-xs font-semibold w-fit">
+            <span>{test.categoryName}</span>
+          </div>
+        )}
 
         {/* Centre Selector */}
         {test.centres.length > 1 && (

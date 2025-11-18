@@ -16,8 +16,12 @@ interface CentreSelectorProps {
 }
 
 export function CentreSelector({ centres, onCentreSelect }: CentreSelectorProps) {
-  const [selectedCentre, setSelectedCentre] = useState(centres[0]);
+  const [selectedCentre, setSelectedCentre] = useState(centres?.[0]);
   const [isOpen, setIsOpen] = useState(false);
+
+  if (!centres || centres.length === 0 || !selectedCentre) {
+    return null;
+  }
 
   const handleSelect = (centre: any) => {
     setSelectedCentre(centre);

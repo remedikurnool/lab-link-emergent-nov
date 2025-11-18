@@ -99,7 +99,7 @@ export function PatientDetailsStep({ onNext }: Props) {
               <Label htmlFor="gender">Gender *</Label>
               <select
                 {...register('gender')}
-                className="w-full mt-1 px-4 py-2 h-10 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full mt-1 px-4 py-2 h-10 rounded-lg border border-gray-200 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>

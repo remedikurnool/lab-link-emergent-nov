@@ -2,6 +2,10 @@ import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
+import { ErrorBoundary } from '@/components/error/ErrorBoundary';
+import { Toaster } from '@/components/ui/toaster';
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
+import { OfflineBanner } from '@/components/ui/offline-banner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -35,7 +39,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <GoogleAnalytics />
+        <OfflineBanner />
+        <ErrorBoundary>
+          <Providers>
+            {children}
+            <Toaster />
+          </Providers>
+        </ErrorBoundary>
       </body>
     </html>
   );

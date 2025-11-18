@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
@@ -11,18 +11,18 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, isGuest, signInAsGuest } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Redirect if already logged in
-  if (user) {
-    router.push('/');
-    return null;
-  }
+  useEffect(() => {
+    if (user || isGuest) {
+      router.push('/');
+    }
+  }, [user, isGuest, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +49,11 @@ export default function LoginPage() {
       setError(err.message || 'An error occurred during login');
       setIsLoading(false);
     }
+  };
+
+  const handleGuestAccess = () => {
+    signInAsGuest();
+    router.push('/');
   };
 
   return (
@@ -130,6 +135,19 @@ export default function LoginPage() {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={handleGuestAccess}
+              className="w-full py-3 border border-dashed border-primary-200 text-primary-600 font-semibold rounded-lg hover:bg-primary-50 transition-colors"
+            >
+              Continue as Guest (Dev Mode)
+            </button>
+            <p className="text-xs text-gray-500 text-center mt-2">
+              Guest mode skips authentication and uses mock data. Disable before production.
+            </p>
+          </div>
 
           {/* Info */}
           <div className="mt-6 pt-6 border-t border-gray-200">

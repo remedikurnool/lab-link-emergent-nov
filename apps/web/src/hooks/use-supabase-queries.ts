@@ -1,20 +1,81 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
+import { handleError } from '@/lib/errors/error-handler';
 
 // Fetch all tests with centre pricing
 export function useTests() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Only set up subscriptions if Supabase is configured
+    if (!supabase) return;
+
+    try {
+      // Set up real-time subscription for tests
+      const testsChannel = supabase
+        .channel('tests-realtime-frontend')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'tests',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['tests'] });
+          }
+        )
+        .subscribe();
+
+      // Set up real-time subscription for centre_pricing
+      const pricingChannel = supabase
+        .channel('tests-pricing-realtime-frontend')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'centre_pricing',
+            filter: 'item_type=eq.test',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['tests'] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(testsChannel);
+        supabase.removeChannel(pricingChannel);
+      };
+    } catch (error) {
+      console.warn('Failed to set up real-time subscriptions for tests:', error);
+    }
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ['tests'],
     queryFn: async () => {
-      // Fetch tests
+      // Fetch tests with categories
       const { data: tests, error: testsError } = await supabase
         .from('tests')
-        .select('*')
+        .select(`
+          *,
+          categories (
+            id,
+            name,
+            image_url
+          )
+        `)
         .eq('is_active', true);
 
-      if (testsError) throw testsError;
+      if (testsError) {
+        handleError(testsError, { showToast: false, logError: true });
+        throw testsError;
+      }
 
       // Fetch all centre pricing for tests
       const { data: pricing, error: pricingError } = await supabase
@@ -31,7 +92,10 @@ export function useTests() {
         .eq('item_type', 'test')
         .eq('is_active', true);
 
-      if (pricingError) throw pricingError;
+      if (pricingError) {
+        handleError(pricingError, { showToast: false, logError: true });
+        throw pricingError;
+      }
 
       // Combine tests with their centre pricing
       const testsWithCentres = tests?.map((test) => {
@@ -52,6 +116,9 @@ export function useTests() {
           name: test.name,
           description: test.description,
           category: test.category,
+          categoryId: test.category_id,
+          categoryName: test.categories?.name || test.category,
+          categoryImage: test.categories?.image_url,
           sampleType: test.sample_type,
           testsIncluded: test.tests_included,
           parameters: test.parameters,
@@ -67,15 +134,74 @@ export function useTests() {
 
 // Fetch all scans with centre pricing
 export function useScans() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Only set up subscriptions if Supabase is configured
+    if (!supabase) return;
+
+    try {
+      // Set up real-time subscription for scans
+      const scansChannel = supabase
+        .channel('scans-realtime-frontend')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'scans',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['scans'] });
+          }
+        )
+        .subscribe();
+
+      // Set up real-time subscription for centre_pricing
+      const pricingChannel = supabase
+        .channel('scans-pricing-realtime-frontend')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'centre_pricing',
+            filter: 'item_type=eq.scan',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['scans'] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(scansChannel);
+        supabase.removeChannel(pricingChannel);
+      };
+    } catch (error) {
+      console.warn('Failed to set up real-time subscriptions for scans:', error);
+    }
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ['scans'],
     queryFn: async () => {
       const { data: scans, error: scansError } = await supabase
         .from('scans')
-        .select('*')
+        .select(`
+          *,
+          categories (
+            id,
+            name,
+            image_url
+          )
+        `)
         .eq('is_active', true);
 
-      if (scansError) throw scansError;
+      if (scansError) {
+        handleError(scansError, { showToast: false, logError: true });
+        throw scansError;
+      }
 
       const { data: pricing, error: pricingError } = await supabase
         .from('centre_pricing')
@@ -89,7 +215,10 @@ export function useScans() {
         .eq('item_type', 'scan')
         .eq('is_active', true);
 
-      if (pricingError) throw pricingError;
+      if (pricingError) {
+        handleError(pricingError, { showToast: false, logError: true });
+        throw pricingError;
+      }
 
       const scansWithCentres = scans?.map((scan) => {
         const centres = pricing
@@ -109,6 +238,9 @@ export function useScans() {
           name: scan.name,
           description: scan.description,
           category: scan.category,
+          categoryId: scan.category_id,
+          categoryName: scan.categories?.name || scan.category,
+          categoryImage: scan.categories?.image_url,
           preparationInstructions: scan.preparation_instructions,
           centres,
         };
@@ -121,15 +253,74 @@ export function useScans() {
 
 // Fetch all packages with centre pricing
 export function usePackages() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Only set up subscriptions if Supabase is configured
+    if (!supabase) return;
+
+    try {
+      // Set up real-time subscription for packages
+      const packagesChannel = supabase
+        .channel('packages-realtime-frontend')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'packages',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['packages'] });
+          }
+        )
+        .subscribe();
+
+      // Set up real-time subscription for centre_pricing
+      const pricingChannel = supabase
+        .channel('packages-pricing-realtime-frontend')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'centre_pricing',
+            filter: 'item_type=eq.package',
+          },
+          () => {
+            queryClient.invalidateQueries({ queryKey: ['packages'] });
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(packagesChannel);
+        supabase.removeChannel(pricingChannel);
+      };
+    } catch (error) {
+      console.warn('Failed to set up real-time subscriptions for packages:', error);
+    }
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ['packages'],
     queryFn: async () => {
       const { data: packages, error: packagesError } = await supabase
         .from('packages')
-        .select('*')
+        .select(`
+          *,
+          categories (
+            id,
+            name,
+            image_url
+          )
+        `)
         .eq('is_active', true);
 
-      if (packagesError) throw packagesError;
+      if (packagesError) {
+        handleError(packagesError, { showToast: false, logError: true });
+        throw packagesError;
+      }
 
       const { data: pricing, error: pricingError } = await supabase
         .from('centre_pricing')
@@ -143,7 +334,10 @@ export function usePackages() {
         .eq('item_type', 'package')
         .eq('is_active', true);
 
-      if (pricingError) throw pricingError;
+      if (pricingError) {
+        handleError(pricingError, { showToast: false, logError: true });
+        throw pricingError;
+      }
 
       const packagesWithCentres = packages?.map((pkg) => {
         const centres = pricing
@@ -162,6 +356,9 @@ export function usePackages() {
           id: pkg.id,
           name: pkg.name,
           description: pkg.description,
+          categoryId: pkg.category_id,
+          categoryName: pkg.categories?.name,
+          categoryImage: pkg.categories?.image_url,
           testsIncluded: pkg.tests_included,
           includedTests: pkg.included_tests,
           popular: pkg.popular,
@@ -185,7 +382,10 @@ export function useDiagnosticCentres() {
         .eq('is_active', true)
         .order('name');
 
-      if (error) throw error;
+      if (error) {
+        handleError(error, { showToast: false, logError: true });
+        throw error;
+      }
       return data;
     },
   });
@@ -206,7 +406,10 @@ export function usePartnerProfile() {
         .eq('user_id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        handleError(error, { showToast: false, logError: true });
+        throw error;
+      }
       return data;
     },
   });
@@ -236,7 +439,10 @@ export function usePartnerBookings() {
         .eq('partner_id', partner.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        handleError(error, { showToast: false, logError: true });
+        throw error;
+      }
       return data;
     },
   });
@@ -265,7 +471,10 @@ export function usePartnerCommissions() {
         .eq('partner_id', partner.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        handleError(error, { showToast: false, logError: true });
+        throw error;
+      }
       return data;
     },
   });

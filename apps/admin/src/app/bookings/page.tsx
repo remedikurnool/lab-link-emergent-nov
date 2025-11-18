@@ -5,14 +5,37 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Filter } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 
-export default function BookingsPage() {
+function BookingsPageContent() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     fetchBookings();
+
+    // Set up real-time subscription for bookings
+    const channel = supabase
+      .channel('bookings-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'bookings',
+        },
+        (payload) => {
+          console.log('Booking change detected:', payload);
+          // Refetch bookings when any change occurs
+          fetchBookings();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [statusFilter]);
 
   const fetchBookings = async () => {
@@ -64,28 +87,17 @@ export default function BookingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Bookings Management</h1>
-              <p className="text-sm text-gray-600">Manage all platform bookings</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
+    <AdminLayout>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Bookings Management</h2>
+        <p className="text-gray-600">Manage all platform bookings</p>
+      </div>
         <div className="flex items-center gap-4 mb-6">
           <Filter className="w-5 h-5 text-gray-600" />
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="all">All Bookings</option>
             <option value="pending">Pending</option>
@@ -150,7 +162,7 @@ export default function BookingsPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {booking.status === 'pending' && (
                     <button
                       onClick={() => updateBookingStatus(booking.id, 'confirmed')}
@@ -167,6 +179,14 @@ export default function BookingsPage() {
                       Mark Complete
                     </button>
                   )}
+                  {booking.payment_status === 'success' && booking.payment_gateway && (
+                    <Link
+                      href={`/bookings/${booking.id}/refund`}
+                      className="px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-600 font-medium rounded-lg text-sm border border-orange-200"
+                    >
+                      Refund
+                    </Link>
+                  )}
                   {booking.status !== 'cancelled' && (
                     <button
                       onClick={() => updateBookingStatus(booking.id, 'cancelled')}
@@ -180,7 +200,10 @@ export default function BookingsPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+    </AdminLayout>
   );
+}
+
+export default function BookingsPage() {
+  return <BookingsPageContent />;
 }

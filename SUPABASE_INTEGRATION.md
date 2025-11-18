@@ -123,7 +123,7 @@ WHERE schemaname = 'public';
 
 ### Step 7: Test Login
 
-1. Go to http://localhost:3000/login
+1. Go to http://localhost:3200/login
 2. Login with:
    ```
    Email: partner@lablink.com

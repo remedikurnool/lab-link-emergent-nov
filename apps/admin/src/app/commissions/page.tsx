@@ -5,14 +5,37 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle, Clock, DollarSign } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 
-export default function CommissionsPage() {
+function CommissionsPageContent() {
   const [commissions, setCommissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('pending');
 
   useEffect(() => {
     fetchCommissions();
+
+    // Set up real-time subscription for commissions
+    const channel = supabase
+      .channel('commissions-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'commissions',
+        },
+        (payload) => {
+          console.log('Commission change detected:', payload);
+          // Refetch commissions when any change occurs
+          fetchCommissions();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [statusFilter]);
 
   const fetchCommissions = async () => {
@@ -79,22 +102,11 @@ export default function CommissionsPage() {
     .reduce((sum, c) => sum + parseFloat(c.amount), 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Commissions Management</h1>
-              <p className="text-sm text-gray-600">Approve and manage partner commissions</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
+    <AdminLayout>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Commissions Management</h2>
+        <p className="text-gray-600">Approve and manage partner commissions</p>
+      </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-white rounded-xl p-6 border border-gray-200">
             <div className="flex items-center gap-2 mb-2">
@@ -111,7 +123,7 @@ export default function CommissionsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             <option value="all">All Commissions</option>
             <option value="pending">Pending</option>
@@ -172,7 +184,10 @@ export default function CommissionsPage() {
             ))}
           </div>
         )}
-      </main>
-    </div>
+    </AdminLayout>
   );
+}
+
+export default function CommissionsPage() {
+  return <CommissionsPageContent />;
 }

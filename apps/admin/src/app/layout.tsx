@@ -2,6 +2,10 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
+import { ErrorBoundary } from '@/components/error/ErrorBoundary';
+
+// Note: Environment variables are handled gracefully in @/lib/supabase.ts
+// The app will work with placeholder values and use mock data if Supabase is not configured
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <ErrorBoundary>
+          <Providers>{children}</Providers>
+        </ErrorBoundary>
       </body>
     </html>
   );

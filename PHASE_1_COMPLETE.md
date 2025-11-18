@@ -175,7 +175,7 @@ Route (app)                    Size    First Load JS
 ```
 
 #### Development Server: ✅ Running
-- URL: http://localhost:3000
+- URL: http://localhost:3200
 - Hot reload: Enabled
 - TypeScript checking: Enabled
 
@@ -226,7 +226,7 @@ yarn dev
 ```
 
 ### Access:
-- Frontend: http://localhost:3000
+- Frontend: http://localhost:3200
 - All routes are accessible and working
 
 ### Next Steps:

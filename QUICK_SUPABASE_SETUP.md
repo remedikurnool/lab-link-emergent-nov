@@ -332,7 +332,7 @@ PORT=3000 yarn dev
 ```
 
 2. **Login:**
-   - Go to http://localhost:3000/login
+   - Go to http://localhost:3200/login
    - Email: partner@lablink.com
    - Password: demo123
 

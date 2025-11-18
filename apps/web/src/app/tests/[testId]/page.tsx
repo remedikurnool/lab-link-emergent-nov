@@ -212,9 +212,11 @@ export default function TestDetailPage(props: {
                         <span className="text-sm line-through text-gray-400">
                           ₹{centre.originalPrice}
                         </span>
-                        <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded">
-                          {centre.discount}% OFF
-                        </span>
+                        {centre.discount && (
+                          <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded">
+                            {centre.discount}% OFF
+                          </span>
+                        )}
                       </>
                     )}
                   </div>

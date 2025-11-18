@@ -6,13 +6,13 @@ import { useAuth } from '@/hooks/use-auth';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, isGuest } = useAuth();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !isGuest) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, loading, isGuest, router]);
 
   if (loading) {
     return (
@@ -25,7 +25,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  if (!user && !isGuest) {
     return null;
   }
 

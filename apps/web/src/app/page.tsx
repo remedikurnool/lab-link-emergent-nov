@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { SearchBar } from '@/components/home/SearchBar';
 import { HeroBanner } from '@/components/home/HeroBanner';
-import { PromoBanner } from '@/components/home/PromoBanner';
 import { CategoryIcons } from '@/components/home/CategoryIcons';
 import { TestCard } from '@/components/cards/TestCard';
 import { DiscountBanner } from '@/components/home/DiscountBanner';
@@ -20,11 +19,11 @@ import { PWAInstallPrompt } from '@/components/pwa/InstallPrompt';
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState('Tests');
   const { addItem } = useCartStore();
-  
+
   // Request notification permission
   useRequestNotificationPermission();
-  
-  // Fetch from Supabase with fallback to mock
+
+  // Use Supabase data with fallback to mock data
   const { data: supabaseTests, isLoading: testsLoading, error: testsError } = useTests();
   const { data: supabaseScans, isLoading: scansLoading, error: scansError } = useScans();
   const { data: supabasePackages, isLoading: packagesLoading, error: packagesError } = usePackages();
@@ -85,9 +84,6 @@ export default function HomePage() {
               <span>⚡</span>
             </div>
           </div>
-
-          {/* Promo Banner */}
-          <PromoBanner />
 
           {/* Categories */}
           <CategoryIcons />

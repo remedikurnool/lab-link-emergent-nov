@@ -81,7 +81,7 @@ export default function PackagesPage() {
               placeholder="Search for health packages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
+              className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm"
             />
           </div>
 
@@ -115,7 +115,7 @@ export default function PackagesPage() {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredPackages.map((pkg) => {
+            {filteredPackages.filter((pkg) => pkg.centres && pkg.centres.length > 0).map((pkg) => {
               return (
                 <div
                   key={pkg.id}
@@ -128,11 +128,32 @@ export default function PackagesPage() {
                     </div>
                   )}
                   
+                  {/* Category Image */}
+                  {pkg.categoryImage && (
+                    <div className="w-full h-32 rounded-lg overflow-hidden mb-3 bg-gray-100">
+                      <img
+                        src={pkg.categoryImage}
+                        alt={pkg.categoryName}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+                  
                   <Link href={`/packages/${pkg.id}`}>
                     <h3 className="text-lg font-bold text-gray-900 mb-2 hover:text-primary-600">
                       {pkg.name}
                     </h3>
                   </Link>
+                  {pkg.categoryName && (
+                    <div className="mb-2">
+                      <span className="inline-block px-2 py-1 bg-primary-50 text-primary-600 text-xs font-semibold rounded">
+                        {pkg.categoryName}
+                      </span>
+                    </div>
+                  )}
                   <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                     {pkg.description}
                   </p>
@@ -161,7 +182,7 @@ export default function PackagesPage() {
                             card.setAttribute('data-selected-centre', e.target.value);
                           }
                         }}
-                        className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                        className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                       >
                         {pkg.centres.map((centre) => (
                           <option key={centre.centreId} value={centre.centreId}>
@@ -170,28 +191,32 @@ export default function PackagesPage() {
                         ))}
                       </select>
                     </div>
-                  ) : (
+                  ) : pkg.centres && pkg.centres.length === 1 ? (
                     <div className="mb-4 text-sm text-gray-600">
-                      {pkg.centres[0].centreName}
+                      {pkg.centres[0]?.centreName}
                     </div>
-                  )}
+                  ) : null}
 
                   <div className="border-t border-gray-200 pt-3">
-                    <div className="flex items-baseline gap-2 mb-3">
-                      <span className="text-2xl font-bold text-gray-900">
-                        ₹{pkg.centres[0].price}
-                      </span>
-                      {pkg.centres[0].originalPrice && (
-                        <>
-                          <span className="text-sm line-through text-gray-400">
-                            ₹{pkg.centres[0].originalPrice}
-                          </span>
-                          <span className="text-sm font-semibold text-green-600">
-                            {pkg.centres[0].discount}% OFF
-                          </span>
-                        </>
-                      )}
-                    </div>
+                    {pkg.centres && pkg.centres.length > 0 && (
+                      <div className="flex items-baseline gap-2 mb-3">
+                        <span className="text-2xl font-bold text-gray-900">
+                          ₹{pkg.centres[0].price}
+                        </span>
+                        {pkg.centres[0].originalPrice && (
+                          <>
+                            <span className="text-sm line-through text-gray-400">
+                              ₹{pkg.centres[0].originalPrice}
+                            </span>
+                            {pkg.centres[0].discount && (
+                              <span className="text-sm font-semibold text-green-600">
+                                {pkg.centres[0].discount}% OFF
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
                     <div className="flex gap-2">
                       <Link
                         href={`/packages/${pkg.id}`}
@@ -201,12 +226,16 @@ export default function PackagesPage() {
                       </Link>
                       <button
                         onClick={(e) => {
+                          if (!pkg.centres || pkg.centres.length === 0) return;
                           const card = e.currentTarget.closest('.bg-white');
-                          const selectedCentreId = card?.getAttribute('data-selected-centre') || pkg.centres[0].centreId;
+                          const selectedCentreId = card?.getAttribute('data-selected-centre') || pkg.centres[0]?.centreId;
                           const centre = pkg.centres.find((c) => c.centreId === selectedCentreId) || pkg.centres[0];
-                          handleAddToCart(pkg, centre);
+                          if (centre) {
+                            handleAddToCart(pkg, centre);
+                          }
                         }}
                         className="flex-1 py-2 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-colors text-sm"
+                        disabled={!pkg.centres || pkg.centres.length === 0}
                       >
                         Add to Cart
                       </button>

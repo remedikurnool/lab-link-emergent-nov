@@ -2,12 +2,19 @@
 
 import { TopBar } from '@/components/navigation/TopBar';
 import { BottomNav } from '@/components/navigation/BottomNav';
-import { useBookingStore } from '@/store/bookingStore';
+import { usePartnerBookings } from '@/hooks/use-supabase-queries';
+import { usePartnerProfile } from '@/hooks/use-supabase-queries';
+import { useBookingsRealtime } from '@/hooks/use-realtime';
 import { Calendar, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
+import { formatDate } from '@/lib/utils';
 
 export default function MyBookingsPage() {
-  const { bookings } = useBookingStore();
+  const { data: partner } = usePartnerProfile();
+  const { data: bookings = [], isLoading } = usePartnerBookings();
+  
+  // Set up real-time updates for bookings
+  useBookingsRealtime(partner?.id);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -21,6 +28,22 @@ export default function MyBookingsPage() {
         return 'bg-yellow-100 text-yellow-700';
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <TopBar />
+        <main className="pb-20 md:pb-8">
+          <div className="container mx-auto px-4 py-12">
+            <div className="text-center">
+              <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
+            </div>
+          </div>
+        </main>
+        <BottomNav />
+      </div>
+    );
+  }
 
   if (bookings.length === 0) {
     return (
@@ -75,12 +98,7 @@ export default function MyBookingsPage() {
                       Booking ID: {booking.id}
                     </div>
                     <div className="text-sm text-gray-600">
-                      Booked on{' '}
-                      {new Date(booking.createdAt).toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      Booked on {formatDate(booking.created_at)}
                     </div>
                   </div>
                   <span
@@ -94,12 +112,12 @@ export default function MyBookingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <div className="text-xs text-gray-500 mb-1">Patient</div>
+                    <div className="text-xs text-gray-500 mb-1">Items</div>
                     <div className="font-semibold text-gray-900">
-                      {booking.patient.fullName}
+                      {booking.items?.length || 0} test{booking.items?.length !== 1 ? 's' : ''}
                     </div>
-                    <div className="text-sm text-gray-600">
-                      {booking.patient.age} yrs, {booking.patient.gender}
+                    <div className="text-sm text-gray-600 capitalize">
+                      {booking.collection_type === 'home' ? 'Home Collection' : 'Lab Visit'}
                     </div>
                   </div>
                   <div>
@@ -108,29 +126,30 @@ export default function MyBookingsPage() {
                       Collection Date
                     </div>
                     <div className="font-semibold text-gray-900">
-                      {new Date(booking.collection.date).toLocaleDateString(
-                        'en-IN',
-                        { day: 'numeric', month: 'short' }
-                      )}
+                      {booking.collection_date ? formatDate(booking.collection_date) : 'N/A'}
                     </div>
                     <div className="text-sm text-gray-600 capitalize">
-                      {booking.collection.timeSlot}
+                      {booking.time_slot || 'N/A'}
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <div className="text-xs text-gray-500 mb-2">Tests Booked</div>
+                  <div className="text-xs text-gray-500 mb-2">Items Booked</div>
                   <div className="space-y-1">
-                    {booking.items.map((item: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="text-sm text-gray-700 flex justify-between"
-                      >
-                        <span>{item.name}</span>
-                        <span className="text-gray-500">₹{item.price}</span>
-                      </div>
-                    ))}
+                    {booking.items && Array.isArray(booking.items) && booking.items.length > 0 ? (
+                      booking.items.map((item: any, idx: number) => (
+                        <div
+                          key={idx}
+                          className="text-sm text-gray-700 flex justify-between"
+                        >
+                          <span>{item.name || item.type}</span>
+                          <span className="text-gray-500">₹{item.price || 0}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-sm text-gray-500">No items found</div>
+                    )}
                   </div>
                 </div>
 
@@ -138,7 +157,7 @@ export default function MyBookingsPage() {
                   <div>
                     <div className="text-xs text-gray-500">Total Amount</div>
                     <div className="text-xl font-bold text-primary-600">
-                      ₹{booking.totalAmount}
+                      ₹{parseFloat(booking.total_amount || 0).toFixed(2)}
                     </div>
                   </div>
                   <Link

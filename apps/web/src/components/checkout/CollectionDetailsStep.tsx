@@ -143,7 +143,7 @@ export function CollectionDetailsStep({ onNext }: Props) {
                 {...register('address')}
                 rows={3}
                 placeholder="House/Flat No., Street Name, Area"
-                className="w-full mt-1 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full mt-1 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
               {errors.address && (
                 <p className="text-sm text-red-500 mt-1">

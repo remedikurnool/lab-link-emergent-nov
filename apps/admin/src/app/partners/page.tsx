@@ -1,66 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, UserCheck, UserX, Edit, Phone, Mail } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { AdminLayout } from '@/components/layout/AdminLayout';
+import { usePartners } from '@/hooks/use-supabase-queries';
 
-export default function PartnersPage() {
-  const [partners, setPartners] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPartners();
-  }, []);
-
-  const fetchPartners = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('partners')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setPartners(data || []);
-    } catch (error) {
-      console.error('Error fetching partners:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+function PartnersPageContent() {
+  const { data: partners = [], isLoading: loading } = usePartners();
 
   const togglePartnerStatus = async (partnerId: string, currentStatus: boolean) => {
     try {
+      const { supabase } = await import('@/lib/supabase');
       const { error } = await supabase
         .from('partners')
         .update({ is_active: !currentStatus })
         .eq('id', partnerId);
 
       if (error) throw error;
-      fetchPartners();
+      // The hook will automatically refetch data due to real-time subscription
     } catch (error) {
       console.error('Error updating partner:', error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Partners Management</h1>
-              <p className="text-sm text-gray-600">Manage healthcare partners</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
+    <AdminLayout>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Partners Management</h2>
+        <p className="text-gray-600">Manage healthcare partners</p>
+      </div>
         {loading ? (
           <div className="text-center py-12">
             <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto" />
@@ -163,7 +132,10 @@ export default function PartnersPage() {
             )}
           </div>
         )}
-      </main>
-    </div>
+    </AdminLayout>
   );
+}
+
+export default function PartnersPage() {
+  return <PartnersPageContent />;
 }

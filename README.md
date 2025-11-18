@@ -9,20 +9,20 @@ A complete, production-ready diagnostic booking platform for healthcare partners
 ./start-platform.sh
 
 # Or manually:
-# Partner App (Port 3000)
-cd apps/web && PORT=3000 yarn dev
+# Partner App (Port 3200)
+cd apps/web && PORT=3200 yarn dev
 
-# Admin Panel (Port 3001)
-cd apps/admin && PORT=3001 yarn dev
+# Admin Panel (Port 3201)
+cd apps/admin && PORT=3201 yarn dev
 ```
 
 **Access:**
-- 📱 Partner App: http://localhost:3000
-- 👨‍💼 Admin Panel: http://localhost:3001
+- 📱 Partner App: http://localhost:3200
+- 👨‍💼 Admin Panel: http://localhost:3201
 
 ## ✨ Complete Feature Set
 
-### 🏥 Partner App (Port 3000)
+### 🏥 Partner App (Port 3200)
 ✅ **Authentication:** Email/password via Supabase Auth  
 ✅ **Browse & Search:** Real-time search with filters  
 ✅ **Multi-Centre Pricing:** Compare prices across centres  
@@ -36,7 +36,7 @@ cd apps/admin && PORT=3001 yarn dev
 ✅ **Multi-Language:** English & Telugu  
 ✅ **Real-Time Notifications:** Browser push  
 
-### 👨‍💼 Admin Panel (Port 3001)
+### 👨‍💼 Admin Panel (Port 3201)
 ✅ **Dashboard:** Revenue, partners, bookings stats  
 ✅ **Partners Management:** Activate/deactivate, view all  
 ✅ **Bookings Management:** Approve, complete, cancel  
@@ -101,8 +101,8 @@ cd apps/admin && PORT=3001 yarn dev
 ```
 lablink/
 ├── apps/
-│   ├── web/          # Partner App (Port 3000)
-│   └── admin/        # Admin Panel (Port 3001)
+│   ├── web/          # Partner App (Port 3200)
+│   └── admin/        # Admin Panel (Port 3201)
 ├── packages/         # Shared packages
 ├── supabase/         # Database migrations & functions
 └── supervisor/       # Process management
@@ -326,7 +326,7 @@ cd apps/web
 yarn dev
 ```
 
-Access the app at: `http://localhost:3000`
+Access the app at: `http://localhost:3200`
 
 ## 🏗️ Phase 1 - Complete ✅
 
@@ -363,7 +363,7 @@ Create `.env.local` in `apps/web/`:
 NEXT_PUBLIC_SUPABASE_URL=https://aqoyqjgngvtdxgqbdtcw.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
 NEXT_PUBLIC_APP_NAME=Lab Link
-NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3200
 ```
 
 ## 📋 Next Phases
